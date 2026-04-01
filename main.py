@@ -20,6 +20,7 @@ app.add_middleware(
 
 @app.get("/", response_class=HTMLResponse)
 def home():
-    return "<h1>Blog App ishlayapti 🚀</h1>"
-
+    with open("index.html", "r", encoding="utf-8") as f:
+        return f.read()
+    
 app.include_router(api_router)
