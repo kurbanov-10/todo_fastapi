@@ -19,8 +19,8 @@ if config.config_file_name is not None:
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from database import Base
-import models # noqa: F401
+from app.core.database import Base
+from app import models # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

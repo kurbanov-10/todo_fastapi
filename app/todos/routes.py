@@ -1,15 +1,15 @@
-from dependencies import get_current_user
-from email_service import send_telegram_message
+from app.core.dependencies import get_current_user, role_checker
+from app.core.email_service import send_telegram_message
 
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 
-from models import Todo
-from database import get_db
-from schemas.todo import TodoCreate, TodoOut, TodoUpdate
-from schemas.users import UserOut
+from app.models import Todo
+from app.core.database import get_db
+from app.todos.schemas import TodoCreate, TodoOut, TodoUpdate
+from app.users.schemas import UserOut
 
 todo_router = APIRouter(prefix='/api/todo')
 
@@ -21,7 +21,9 @@ async def send_telegram_message_endpoint(chat_id: str, message: str, bg_tasks: B
 
 
 @todo_router.post('/', response_model=TodoOut)
-async def create_todo(todo_in: TodoCreate, db: Session = Depends(get_db), user: UserOut = Depends(get_current_user)):
+async def create_todo(todo_in: TodoCreate, db: Session = Depends(get_db),
+                      user: UserOut = Depends(get_current_user),
+                      _: UserOut = Depends(role_checker('admin'))):
     if not user:
         raise HTTPException(status_code=400, detail=f"{todo_in['user_id']} idli user mavjud emas")
 

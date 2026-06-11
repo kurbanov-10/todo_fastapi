@@ -1,16 +1,18 @@
-from database import get_db
-from models import User
-import security
+from app.core.database import get_db
+from app.models import User
+from app.core import security
 import jwt
 
 from fastapi.params import Depends
 from fastapi import HTTPException, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 
+from app.core.enums import Roles
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(authorizationUrl="/users/login", tokenUrl="/users/login")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login/")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -31,3 +33,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
 
     return user
+
+
+def role_checker(*allowed_roles: Roles):
+    def checker(user: User = Depends(get_current_user)):
+        if user.role not in allowed_roles:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Ruxsat etilmagan")
+        return user
+
+    return checker

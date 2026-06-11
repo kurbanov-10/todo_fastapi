@@ -1,4 +1,4 @@
-import security
+from app.core import security
 import shutil
 
 from sqlalchemy import select
@@ -6,11 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession as Session
 from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 
-from models import User
-from database import get_db
-from schemas.users import Token, UserCreate, UserOut
-from email_service import send_welcome_email
-from dependencies import get_current_user
+from app.models import User
+from app.core.database import get_db
+from app.users.schemas import Token, UserCreate, UserOut
+from app.core.email_service import send_welcome_email
+from app.core.dependencies import get_current_user
 
 users_router = APIRouter(prefix='/api/users')
 
@@ -39,7 +39,7 @@ async def create_user(bg_tasks: BackgroundTasks, user_in: UserCreate, db: Sessio
 async def upload_avatar(file: UploadFile = File(...),
                         current_user: UserOut = Depends(get_current_user),
                         db: Session = Depends(get_db)):
-    from config import UPLOAD_FOLDER
+    from app.core.config import UPLOAD_FOLDER
 
     file_extension = file.filename.split(".")[-1]
     file_location = f"{UPLOAD_FOLDER}/{current_user.id}_avatar.{file_extension}"

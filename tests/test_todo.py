@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
 
-from database import Base, get_db
+from app.core.database import Base, get_db
 from main import app
 
 load_dotenv()

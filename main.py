@@ -1,7 +1,7 @@
 import time
 from fastapi import FastAPI, Request
-from routes.users import users_router
-from routes.todo import todo_router
+from app.users.routes import users_router
+from app.todos.routes import todo_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()

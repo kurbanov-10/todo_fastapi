@@ -1,7 +1,7 @@
 import os
 
 from fastapi.staticfiles import StaticFiles
-from main import app
+from app.main import app
 
 
 UPLOAD_FOLDER = "uploads"
